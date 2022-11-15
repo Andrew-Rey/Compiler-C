@@ -1,0 +1,10 @@
+^D:\XRCLANG\COMPILER-C\LEXICAL-ANALYZER-V1\BUILD\CMAKEFILES\270594C92130513DAD9B1A3A352AF833\GENERATE.STAMP.RULE
+setlocal
+D:\xrCLang\VisualStudio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe -SD:/xrCLang/Compiler-C/lexical-analyzer-v1 -BD:/xrCLang/Compiler-C/lexical-analyzer-v1/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/xrCLang/Compiler-C/lexical-analyzer-v1/build/lexical_analyzer_v1.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

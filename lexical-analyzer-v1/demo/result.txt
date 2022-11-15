@@ -1,0 +1,72 @@
+1:	ReservedWord: int
+1:	Identifier: demo
+1:	(
+1:	ReservedWord: int
+1:	Identifier: a
+1:	,
+1:	ReservedWord: int
+1:	Identifier: b
+1:	)
+1:	{
+2:	ReservedWord: if
+2:	(
+2:	Identifier: a
+2:	>
+2:	Identifier: b
+2:	)
+2:	{
+3:	ReservedWord: return
+3:	Identifier: a
+3:	;
+4:	}
+4:	ReservedWord: else
+4:	{
+5:	ReservedWord: return
+5:	Identifier: b
+5:	;
+6:	}
+7:	}
+11:	ReservedWord: void
+11:	Identifier: main
+11:	(
+11:	)
+11:	{
+12:	ReservedWord: int
+12:	Identifier: first
+12:	ConstNumber: 1
+12:	=
+12:	ConstNumber: 10
+12:	;
+13:	ReservedWord: int
+13:	Identifier: end
+13:	ConstNumber: 1
+13:	=
+13:	ConstNumber: 2
+13:	;
+14:	ReservedWord: int
+14:	Identifier: result
+14:	;
+15:	ReservedWord: while
+15:	(
+15:	Identifier: a
+15:	>
+15:	ConstNumber: 0
+15:	)
+15:	{
+16:	Identifier: a
+16:	-
+16:	=
+16:	ConstNumber: 1
+16:	;
+17:	Identifier: result
+17:	=
+17:	Identifier: demo
+17:	(
+17:	Identifier: a
+17:	,
+17:	Identifier: b
+17:	)
+17:	;
+18:	}
+19:	}
+EOF
