@@ -34,8 +34,8 @@ void dfaIdentifier(std::string &file_in, StateType &state, std::vector<char> &bu
                     if (std::isalpha(c) || std::isdigit(c) || c == '_') {
                         buf.push_back(c);
                         state = StateType::IN_ID;
-                    } else if (std::isblank(c) || isSeparator(c)) {
-                        if (isSeparator(c)) {
+                    } else if (std::isblank(c) || isSeparator(c) || isOperator(c)) {
+                        if (isSeparator(c) || isOperator(c)) {
                             file_read.seekg((long long) -sizeof(char), std::ios::cur);
                             read_p = file_read.tellg();
                         }

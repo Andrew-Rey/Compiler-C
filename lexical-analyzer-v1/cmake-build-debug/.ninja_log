@@ -32,3 +32,15 @@
 1705	2008	6902166455783245	main.exe	af864a9e1c8c05d
 5	908	6902167760240523	CMakeFiles/main.dir/main.cpp.obj	57e15f41be5fefe
 909	1060	6902167761617273	main.exe	af864a9e1c8c05d
+11	1739	6902213451755860	CMakeFiles/main.dir/main.cpp.obj	57e15f41be5fefe
+5	1752	6902213451881130	CMakeFiles/analyzerlib.dir/src/LexicalAnalyzer.cpp.obj	caa11185b19fd2b
+1752	1916	6902213453567737	libanalyzerlib.a	c27d23f6475e259d
+1916	2147	6902213455784643	main.exe	af864a9e1c8c05d
+15	1585	6902220612595401	CMakeFiles/main.dir/main.cpp.obj	57e15f41be5fefe
+6	1587	6902220612635402	CMakeFiles/analyzerlib.dir/src/LexicalAnalyzer.cpp.obj	caa11185b19fd2b
+1588	1731	6902220614091699	libanalyzerlib.a	c27d23f6475e259d
+1732	1935	6902220616054658	main.exe	af864a9e1c8c05d
+4	1556	6902222103439263	CMakeFiles/analyzerlib.dir/src/LexicalAnalyzer.cpp.obj	caa11185b19fd2b
+10	1572	6902222103588878	CMakeFiles/main.dir/main.cpp.obj	57e15f41be5fefe
+1556	1699	6902222104879144	libanalyzerlib.a	c27d23f6475e259d
+1699	2007	6902222107855812	main.exe	af864a9e1c8c05d

@@ -1,27 +1,9 @@
-int demo(int a, int b) {
-    if (a > b) {
-        return a;
-    } else {
-        return b;
-    }
-}
-
-/* this is a test comment */
-
 void main() {
-    int _first1 = 10;
-    int end1_ = 2;
+    int _first1 = 0;
+    int end1_ = 02;
     int result;
     while (a > 0) {
         a -= 1;
         result = demo(a, b);
     }
 }
-
-/** another comment **/
-
-/*
-just a test
-comment
-multi-line
-*/

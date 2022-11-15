@@ -24,8 +24,13 @@ void dfaDigits(std::string &file_in, StateType &state, std::vector<char> &buf, l
                     } else if (std::isdigit(c)) {
                         buf.push_back(c);
                         state = StateType::IN_DIGITS;
-                        if ((int) c == 0) {
+                        if (c == '0') {
                             state = StateType::END_DIGITS;
+                            file_read.read(&c, sizeof(char));
+                            if (std::isdigit(c)) {
+                                state = StateType::ERROR;
+                                file_read.seekg((long long) -sizeof(char), std::ios::cur);
+                            }
                         }
                     } else {
                         file_read.seekg((long long) -sizeof(char), std::ios::cur);
@@ -37,8 +42,8 @@ void dfaDigits(std::string &file_in, StateType &state, std::vector<char> &buf, l
                     if (std::isdigit(c)) {
                         buf.push_back(c);
                         state = StateType::IN_DIGITS;
-                    } else if (std::isblank(c) || isSeparator(c)) {
-                        if (isSeparator(c)) {
+                    } else if (std::isblank(c) || isSeparator(c) || isOperator(c)) {
+                        if (isSeparator(c) || isOperator(c)) {
                             file_read.seekg((long long) -sizeof(char), std::ios::cur);
                             read_p = file_read.tellg();
                         }

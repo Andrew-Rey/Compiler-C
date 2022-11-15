@@ -32,27 +32,27 @@ void dfaComment(std::string &file_in, StateType &state, std::vector<char> &buf, 
                     break;
                 case StateType::CMT_S1:
                     if (c == '*') {
-                        state = StateType::IN_CMT_S2;
+                        state = StateType::INNER_CMT_S2;
                     } else {
-                        file_read.seekg((long long) -sizeof(char), std::ios::cur);
+                        file_read.seekg((long long) -2 * sizeof(char), std::ios::cur);
                         read_p = file_read.tellg();
                         state = StateType::END;
                     }
                     break;
-                case StateType::IN_CMT_S2:
+                case StateType::INNER_CMT_S2:
                     if (c == '*') {
-                        state = StateType::IN_CMT_S3;
+                        state = StateType::CMT_S3;
                     } else {
-                        state = StateType::IN_CMT_S2;
+                        state = StateType::INNER_CMT_S2;
                     }
                     break;
-                case StateType::IN_CMT_S3:
+                case StateType::CMT_S3:
                     if (c == '/') {
                         state = StateType::END_CMT;
                     } else if (c == '*') {
-                        state = StateType::IN_CMT_S3;
+                        state = StateType::CMT_S3;
                     } else {
-                        state = StateType::IN_CMT_S2;
+                        state = StateType::INNER_CMT_S2;
                     }
                     break;
                 default:

@@ -28,7 +28,7 @@ enum struct StateType {
     END_UNEQ_EXPR, END_EQ_EXPR,
 
     // comment
-    ENTER_CMT, CMT_S1, IN_CMT_S2, IN_CMT_S3, END_CMT,
+    ENTER_CMT, CMT_S1, INNER_CMT_S2, CMT_S3, END_CMT,
 
     // end
     END, ERROR
