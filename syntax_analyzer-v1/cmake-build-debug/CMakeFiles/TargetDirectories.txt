@@ -1,0 +1,4 @@
+D:/xrCLang/Compiler-C/syntax_analyzer-v1/cmake-build-debug/CMakeFiles/compilerlib.dir
+D:/xrCLang/Compiler-C/syntax_analyzer-v1/cmake-build-debug/CMakeFiles/main.dir
+D:/xrCLang/Compiler-C/syntax_analyzer-v1/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/xrCLang/Compiler-C/syntax_analyzer-v1/cmake-build-debug/CMakeFiles/rebuild_cache.dir

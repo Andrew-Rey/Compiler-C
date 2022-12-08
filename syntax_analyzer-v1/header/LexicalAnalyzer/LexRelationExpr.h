@@ -1,0 +1,14 @@
+//
+// Created by XUxiansen on 2022/11/15.
+//
+
+#ifndef LEXICAL_ANALYER_V1_LEXRELATIONEXPR_H
+#define LEXICAL_ANALYER_V1_LEXRELATIONEXPR_H
+
+
+class LexRelationExpr {
+
+};
+
+
+#endif //LEXICAL_ANALYER_V1_LEXRELATIONEXPR_H
