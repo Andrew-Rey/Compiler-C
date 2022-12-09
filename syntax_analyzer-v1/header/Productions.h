@@ -15,6 +15,10 @@ void addProduction(std::string left, std::vector<std::string> right) {
     productions.push_back(*temp);
 }
 
+inline bool willReduce(const Production& prod) {
+    return prod.current_ == prod.right_.size();
+}
+
 void generateSyntax() {
     addProduction("Program",    {"Sentence"});
     addProduction("Sentence",   {"Stmt", "Func"});
@@ -61,6 +65,23 @@ std::vector<int> findAllProduction(const ProductionTable& pt, const Token& tok) 
         loc = findProduction(pt, 0, tok);
         if (loc != GO_ERROR) {
             res.push_back(loc);
+        }
+    }
+    return res;
+}
+
+// current reading token x, find out the items
+Closure findCurrentProduction(const Closure& closure, const Token& x) {
+    if (closure.empty()) {
+        return {};
+    }
+    Closure res{};
+    for (const auto& item: closure) {
+        Production prod = item.first;
+        if (!willReduce(prod)) {
+            if (prod.right_[prod.current_] == x) {
+                res.push_back(item);
+            }
         }
     }
     return res;

@@ -8,6 +8,11 @@
 #include <cstring>
 #include <string>
 
+#define GLOBAL_START "Program"
+#define START_SIGN "Sentence"
+#define EMPTY_STR "eps"
+#define END_SIGN "$"
+
 typedef std::string Token;
 
 namespace alphabet {
@@ -22,9 +27,9 @@ namespace alphabet {
     };
 
     const std::vector<Token> non_terminal_ = {
-            "Program",
+            GLOBAL_START,
             // tokens
-            "Sentence",
+            START_SIGN,
             // for Sentence
             "Stmt", "Func",
 
@@ -42,7 +47,7 @@ namespace alphabet {
     };
 
     const std::vector<Token> boundary = {
-            "eps", "$"
+            EMPTY_STR, END_SIGN
     };
 
     bool isTerminal(Token tok) {
@@ -67,5 +72,7 @@ namespace alphabet {
     bool isEps(Token tok) {
         return tok == "eps";
     }
+
+
 
 }

@@ -39,12 +39,22 @@ struct Production {
     Token              left_;
     std::vector<Token> right_;
 
+    Production() = default;
+    Production(Token left, std::vector<Token> right) {
+        current_ = 0;
+        loc_ = 0;
+        left_ = std::move(left);
+        right_ = std::move(right);
+    }
+
     bool operator==(const Production& prod) const {
         return this->current_ == prod.current_ &&
                     this->loc_ == prod.loc_ &&
                     this->left_ == prod.left_ &&
                     this->right_ == prod.right_;
     }
+
+    Production& operator=(const Production& prod) = default;
 };
 
 struct astNode {
@@ -68,3 +78,14 @@ SymbolTable     symbol_table;
 ProductionTable productions;
 LRTable lr1_table;
 
+
+// global functions
+inline bool in(std::vector<Token> tok_vec, Token tok) {
+    return std::any_of(tok_vec.begin(), tok_vec.end(), [&](const Token &t) { return t == tok; });
+}
+
+inline bool in(std::vector<Item> closure, Item item) {
+    return std::any_of(closure.begin(), closure.end(), [&](const Item &i) {
+        return i.second == item.second && i.first == item.first;
+    });
+}

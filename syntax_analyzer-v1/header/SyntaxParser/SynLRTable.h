@@ -11,16 +11,6 @@
 using alphabet::isTerminal;
 using alphabet::isEps;
 
-bool in(std::vector<Token> tok_vec, Token tok) {
-    return std::any_of(tok_vec.begin(), tok_vec.end(), [&](const Token &t) { return t == tok; });
-}
-
-bool in(std::vector<Item> closure, Item item) {
-    return std::any_of(closure.begin(), closure.end(), [&](const Item &i) {
-        return i.second == item.second && i.first == item.first;
-    });
-}
-
 void first_rec(const Token &tok, std::vector<Token> &res) {
     if (in(res, tok)) {
         return;
@@ -51,7 +41,7 @@ std::vector<Token> first(std::vector<Token> tok_vec) {
 std::vector<Token> stringFirst(const Item &item) {
     Production prod = item.first;
     // when production is not going to be reduced
-    if (prod.current_ == prod.right_.size()) {
+    if (!willReduce(prod)) {
         Token next_tok = item.second;
         std::vector<Token> res;
         std::vector<Token> tok_vec;
@@ -67,12 +57,71 @@ std::vector<Token> stringFirst(const Item &item) {
     return {};
 }
 
-int generateClosure(Closure state) {
+// conduct 1 iteration
+void generateClosure(Closure &state) {
+    std::vector<Item> temp_closure = state;
+    for (auto item: state) {
+        Production current_prod = item.first;
+        Token current_next_tok = item.second;
+        // not reduce
+        if (willReduce(current_prod)) {
+            break;
+        }
+        Token candidate_tok = current_prod.right_[current_prod.current_];
+        std::vector<int> candidate_prod_idx = findAllProduction(productions, candidate_tok);
+        std::vector<Token> candidate_next = stringFirst(item);
+        for (auto idx: candidate_prod_idx) {
+            for (const auto &next_tok: candidate_next) {
+                Item temp_item;
+                temp_item.first = productions[idx];
+                item.second = next_tok;
+                if (!in(temp_closure, item)) {
+                    temp_closure.push_back(item);
+                }
+            }
+        }
+    }
+    state = temp_closure;
 }
 
-int nextClosure(int cur_idx, Token x);
+Closure generateClosureWrapper(Closure state) {
+    Closure former_closure = state;
+    while (true) {
+        generateClosure(former_closure);
+        if (former_closure.size() == state.size()) {
+            break;
+        } else if (former_closure.size() > state.size()) {
+            state = former_closure;
+        } else {
+            throw std::runtime_error("error in newClosure!");
+        }
+    }
+    return state;
+}
 
-std::vector<Closure> lr1Closure(ProductionTable table);
+Closure nextClosure(const Closure &current_closure, const Token &x) {
+    Closure new_closure;
+    Closure it_closure = findCurrentProduction(current_closure, x);
+    for (auto item: it_closure) {
+        if (!willReduce(item.first)) {
+            item.first.current_ += 1;
+            new_closure.push_back(item);
+        }
+    }
+    return new_closure;
+}
+
+std::vector<Closure> lr1Closure(std::vector<Closure> closure_table) {
+    for (auto closure: closure_table) {
+
+    }
+}
+
+std::vector<Closure> lr1ClosureWrapper(const ProductionTable& table) {
+    Item init_item = std::pair<Production, NextToken>(Production(GLOBAL_START, {START_SIGN}), END_SIGN);
+    std::vector<Closure> closure_table = {generateClosureWrapper(Closure{init_item})};
+
+}
 
 void generateLRTable();
 
