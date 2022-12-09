@@ -12,8 +12,8 @@
 #include <cstring>
 #include <cassert>
 
-using alphabet::reserve_;
-using alphabet::non_reserve_;
+using alphabet::terminal_res_;
+using alphabet::non_terminal_;
 
 typedef void(*dfa)(std::string &file_in, StateType &state, std::vector<char> &buf, long long &read_p);
 
@@ -40,7 +40,7 @@ void lexAnalyzer(const std::string &file_in) {
 
     auto alpha_find = [&](const std::string &candidate) {
         bool res = false;
-        for (auto &it: reserve_) {
+        for (auto &it: terminal_res_) {
             const auto &temp = it;
             if (temp == candidate) {
                 res = true;

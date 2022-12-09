@@ -26,7 +26,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 34,
+				"line" : 19,
 				"parent" : 0
 			},
 			{
@@ -79,7 +79,7 @@
 			},
 			"sourceIndexes" : 
 			[
-				14
+				17
 			]
 		}
 	],
@@ -110,14 +110,17 @@
 				10,
 				11,
 				12,
-				13
+				13,
+				14,
+				15,
+				16
 			]
 		},
 		{
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				14
+				17
 			]
 		}
 	],
@@ -185,12 +188,27 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "header/Productions.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "header/SyntaxParser/SynActions.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "header/SyntaxParser/SynInterface.h",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
-			"path" : "header/SyntaxParser/SynProductions.h",
+			"path" : "header/SyntaxParser/SynLRTable.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "header/SyntaxParser/SyntaxParser.h",
 			"sourceGroupIndex" : 0
 		},
 		{

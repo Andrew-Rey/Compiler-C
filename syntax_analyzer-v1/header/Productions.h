@@ -6,6 +6,15 @@
 
 #include "Global.h"
 
+
+void addProduction(std::string left, std::vector<std::string> right) {
+    auto *temp = new Production;
+    temp->current_ = 0;
+    temp->left_ = std::move(left);
+    temp->right_ = std::move(right);
+    productions.push_back(*temp);
+}
+
 void generateSyntax() {
     addProduction("Program",    {"Sentence"});
     addProduction("Sentence",   {"Stmt", "Func"});
@@ -31,6 +40,32 @@ void generateSyntax() {
     addProduction("FuncParam",  {"Type", "Identifier", "FuncParam"});
 }
 
+int findProduction(ProductionTable pt, int loc, const Token& tok) {
+    if (alphabet::isTerminal(tok)) {
+        return GO_ERROR;
+    } else {
+        for (int i = loc; i < pt.size(); ++i) {
+            if (pt[i].left_ == tok) {
+                return i;
+            }
+        }
+        return GO_ERROR;
+    }
+}
+
+//  find all productions whose left is `tok`
+std::vector<int> findAllProduction(const ProductionTable& pt, const Token& tok) {
+    std::vector<int> res;
+    int loc = 0;
+    while (loc != productions.size() && loc != GO_ERROR) {
+        loc = findProduction(pt, 0, tok);
+        if (loc != GO_ERROR) {
+            res.push_back(loc);
+        }
+    }
+    return res;
+}
+
 void printProductions() {
     if (!productions.empty()) {
         cout << "The Productions we use:" << endl;
@@ -43,7 +78,7 @@ void printProductions() {
         for (int i = 0; i < productions.size(); ++i) {
             auto v = productions[i];
             cout << setw(4) << "(" << i << ")" << setw(COUT_WIDTH) << v.left_ << " -> ";
-            for (auto l: v.right_) {
+            for (const auto& l: v.right_) {
                 cout << l << " ";
             }
             cout << endl;

@@ -19,69 +19,52 @@
 #include <cstring>
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
 
 #define COUT_WIDTH 12
 #define MAX_PRO_LEN 10
+#define ACCEPT -1
+#define TAIL -1
+#define GO_ERROR -1
 
 using std::cout;
 using std::cin;
 using std::endl;
 using std::setw;
 
+
 struct Production {
-    int current_{};
-    Token left_;
+    int                current_{};
+    int                loc_{};
+    Token              left_;
     std::vector<Token> right_;
+
+    bool operator==(const Production& prod) const {
+        return this->current_ == prod.current_ &&
+                    this->loc_ == prod.loc_ &&
+                    this->left_ == prod.left_ &&
+                    this->right_ == prod.right_;
+    }
 };
 
 struct astNode {
-    Token tok_;
+    Token       tok_;
     std::string value_;
-    astNode *child[MAX_PRO_LEN];
+    astNode*    child[MAX_PRO_LEN];
 };
 
-typedef std::set<Token> NextToken;
+typedef int(*Action)(int state, Token tok);
 
-typedef std::pair<Production, NextToken> Item;
-
-typedef std::vector<Item> Closure;
-
-typedef int(*Action)(int idx);
-
-typedef std::vector<std::vector<Action> > LRTable;
-
+typedef Token                                       NextToken;
+typedef std::pair<Production, NextToken>            Item;
+typedef std::vector<Item>                           Closure;
+typedef std::vector<std::vector<Action> >           LRTable;
 typedef std::vector<std::pair<Token, std::string> > SymbolTable;
+typedef std::vector<Production>                     ProductionTable;
 
-typedef std::vector<Production> ProductionTable;
 
 // global variables
-SymbolTable symbol_table;
+SymbolTable     symbol_table;
 ProductionTable productions;
+LRTable lr1_table;
 
-// global functions
-void printSymbolTable() {
-    if (!symbol_table.empty()) {
-        cout << "The symbol table is:" << endl;
-        for (auto _ = 0; _ < 50; ++_) {
-            cout << "=";
-        }
-        cout << endl;
-
-        for (const auto &item: symbol_table) {
-            cout << setw(COUT_WIDTH) << item.second << setw(COUT_WIDTH) << item.first << endl;
-        }
-
-        for (auto _ = 0; _ < 50; ++_) {
-            cout << "=";
-        }
-        cout << endl;
-    }
-}
-
-void addProduction(std::string left, std::vector<std::string> right) {
-    auto *temp = new Production;
-    temp->current_ = -1;
-    temp->left_ = std::move(left);
-    temp->right_ = std::move(right);
-    productions.push_back(*temp);
-}
