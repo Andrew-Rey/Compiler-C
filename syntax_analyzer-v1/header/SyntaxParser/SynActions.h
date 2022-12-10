@@ -4,10 +4,10 @@
 #include "Global.h"
 
 // action, the element in table
-int reduce();
+int reduce(int state, Token tok);
 
-int go();
+int go(int state, Token tok);
 
-int error();
+int error(int state, Token tok);
 
-int accept();
+int accept(int state, Token tok);

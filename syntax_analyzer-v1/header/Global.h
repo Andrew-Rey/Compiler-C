@@ -21,11 +21,11 @@
 #include <iomanip>
 #include <algorithm>
 
-#define COUT_WIDTH 12
+#define COUT_WIDTH  12
 #define MAX_PRO_LEN 10
-#define ACCEPT -1
-#define TAIL -1
-#define GO_ERROR -1
+#define ACCEPT      -1
+#define TAIL        -1
+#define GO_ERROR    -1
 
 using std::cout;
 using std::cin;
@@ -40,43 +40,44 @@ struct Production {
     std::vector<Token> right_;
 
     Production() = default;
+
     Production(Token left, std::vector<Token> right) {
         current_ = 0;
-        loc_ = 0;
-        left_ = std::move(left);
-        right_ = std::move(right);
+        loc_     = 0;
+        left_    = std::move(left);
+        right_   = std::move(right);
     }
 
-    bool operator==(const Production& prod) const {
+    bool operator==(const Production &prod) const {
         return this->current_ == prod.current_ &&
-                    this->loc_ == prod.loc_ &&
-                    this->left_ == prod.left_ &&
-                    this->right_ == prod.right_;
+                this->loc_    == prod.loc_ &&
+                this->left_   == prod.left_ &&
+                this->right_  == prod.right_;
     }
 
-    Production& operator=(const Production& prod) = default;
+    Production &operator=(const Production &prod) = default;
 };
 
 struct astNode {
-    Token       tok_;
-    std::string value_;
-    astNode*    child[MAX_PRO_LEN];
+    Token                 tok_;
+    std::string           value_;
+    astNode*              child[MAX_PRO_LEN];
 };
 
 typedef int(*Action)(int state, Token tok);
 
-typedef Token                                       NextToken;
-typedef std::pair<Production, NextToken>            Item;
-typedef std::vector<Item>                           Closure;
-typedef std::vector<std::vector<Action> >           LRTable;
-typedef std::vector<std::pair<Token, std::string> > SymbolTable;
-typedef std::vector<Production>                     ProductionTable;
+typedef Token                                               NextToken;
+typedef std::pair<Production, NextToken>                    Item;
+typedef std::vector<Item>                                   Closure;
+typedef std::vector<std::vector<std::map<Token ,Action> > > LRTable;
+typedef std::vector<std::pair<Token, std::string> >         SymbolTable;
+typedef std::vector<Production>                             ProductionTable;
 
 
 // global variables
 SymbolTable     symbol_table;
 ProductionTable productions;
-LRTable lr1_table;
+LRTable         lr1_table;
 
 
 // global functions
@@ -88,4 +89,8 @@ inline bool in(std::vector<Item> closure, Item item) {
     return std::any_of(closure.begin(), closure.end(), [&](const Item &i) {
         return i.second == item.second && i.first == item.first;
     });
+}
+
+inline bool in(std::vector<Closure> closure_table, Closure closure) {
+    return std::any_of(closure_table.begin(), closure_table.end(), [&](const Closure &c) { return c == closure; });
 }

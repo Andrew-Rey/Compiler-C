@@ -73,6 +73,17 @@ namespace alphabet {
         return tok == "eps";
     }
 
+    std::vector<Token> every() {
+        std::vector<Token> res;
+        res.insert(res.begin(), terminal_res_.begin(), terminal_res_.end());
+        res.insert(res.end(), terminal_non_res_.begin(), terminal_non_res_.end());
+        res.insert(res.end(), non_terminal_.begin(), non_terminal_.end());
+        res.insert(res.end(), boundary.begin(), boundary.end());
+        return res;
+    }
 
+    size_t tokenCount() {
+        return terminal_res_.size() + terminal_non_res_.size() + non_terminal_.size() + boundary.size();
+    }
 
 }

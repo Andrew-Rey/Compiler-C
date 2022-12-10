@@ -10,6 +10,8 @@
 
 using alphabet::isTerminal;
 using alphabet::isEps;
+using alphabet::every;
+using alphabet::tokenCount;
 
 void first_rec(const Token &tok, std::vector<Token> &res) {
     if (in(res, tok)) {
@@ -87,11 +89,11 @@ void generateClosure(Closure &state) {
 Closure generateClosureWrapper(Closure state) {
     Closure former_closure = state;
     while (true) {
-        generateClosure(former_closure);
-        if (former_closure.size() == state.size()) {
+        generateClosure(state);
+        if (state.size() == former_closure.size()) {
             break;
-        } else if (former_closure.size() > state.size()) {
-            state = former_closure;
+        } else if (state.size() > former_closure.size()) {
+            former_closure = state;
         } else {
             throw std::runtime_error("error in newClosure!");
         }
@@ -111,19 +113,52 @@ Closure nextClosure(const Closure &current_closure, const Token &x) {
     return new_closure;
 }
 
-std::vector<Closure> lr1Closure(std::vector<Closure> closure_table) {
-    for (auto closure: closure_table) {
-
+void lr1Closure(std::vector<Closure> &closure_table) {
+    std::vector<Closure> temp_table = closure_table;
+    for (const auto &closure: closure_table) {
+        for (const auto &tok: every()) {
+            Closure next_closure = nextClosure(closure, tok);
+            if (!in(closure_table, closure) && !closure.empty()) {
+                temp_table.push_back(next_closure);
+            }
+        }
     }
+    closure_table = temp_table;
 }
 
-std::vector<Closure> lr1ClosureWrapper(const ProductionTable& table) {
+std::vector<Closure> lr1ClosureWrapper(const ProductionTable &table) {
     Item init_item = std::pair<Production, NextToken>(Production(GLOBAL_START, {START_SIGN}), END_SIGN);
     std::vector<Closure> closure_table = {generateClosureWrapper(Closure{init_item})};
-
+    std::vector<Closure> former_table = closure_table;
+    while (true) {
+        lr1Closure(closure_table);
+        if (closure_table.size() == former_table.size()) {
+            break;
+        } else if (closure_table.size() > former_table.size()) {
+            former_table = closure_table;
+        } else {
+            throw std::runtime_error("error in lr1ClosureWrapper!");
+        }
+    }
+    return closure_table;
 }
 
-void generateLRTable();
+void generateLRTable(const ProductionTable &table) {
+    std::vector<Closure> closure_table = lr1ClosureWrapper(table);
+    // init table to error
+    for (int i = 0; i < closure_table.size(); ++i) {
+        std::vector<std::map<Token, Action> > init_vec;
+        for (auto tok: every()) {
+            std::map<Token, Action> init_map;
+            init_map[tok] = error;
+            init_vec.push_back(init_map);
+        }
+    }
+    // fill the table
+    for (int row = 0; row < closure_table.size(); ++row) {
+        //TODO: 去看电影了, 回来记得写
+    }
+}
 
 void printSymbolTable() {
     if (!symbol_table.empty()) {
