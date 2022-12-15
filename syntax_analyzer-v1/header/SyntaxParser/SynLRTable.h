@@ -156,7 +156,7 @@ void generateLRTable(const ProductionTable &table) {
     }
     // fill the table
     for (int row = 0; row < closure_table.size(); ++row) {
-        //TODO: 去看电影了, 回来记得写
+
     }
 }
 

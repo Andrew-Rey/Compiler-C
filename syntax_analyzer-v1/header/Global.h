@@ -94,3 +94,30 @@ inline bool in(std::vector<Item> closure, Item item) {
 inline bool in(std::vector<Closure> closure_table, Closure closure) {
     return std::any_of(closure_table.begin(), closure_table.end(), [&](const Closure &c) { return c == closure; });
 }
+
+// return the idx of closure in closure table
+inline int closure_to_idx(const std::vector<Closure>& closure_table, const Closure& closure) {
+    for (int idx = 0; idx < closure_table.size(); ++idx) {
+        if (closure_table[idx] == closure) {
+            return idx;
+        }
+    }
+    return GO_ERROR;
+}
+
+inline bool willReduce(const Production& prod) {
+    return prod.current_ == prod.right_.size();
+}
+
+inline std::vector<Token> closure_next_token(Closure closure) {
+    std::vector<Token> next_tok_set;
+    for (auto item: closure) {
+        Production prod = item.first;
+        if (!willReduce(prod)) {
+            Token tok = prod.right_[prod.current_ + 1];
+            if (!in(next_tok_set, tok)) {
+                next_tok_set.push_back(tok);
+            }
+        }
+    }
+}

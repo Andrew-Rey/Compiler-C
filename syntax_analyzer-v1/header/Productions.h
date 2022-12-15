@@ -15,10 +15,6 @@ void addProduction(std::string left, std::vector<std::string> right) {
     productions.push_back(*temp);
 }
 
-inline bool willReduce(const Production& prod) {
-    return prod.current_ == prod.right_.size();
-}
-
 void generateSyntax() {
     addProduction("Program",    {"Sentence"});
     addProduction("Sentence",   {"Stmt", "Func"});
