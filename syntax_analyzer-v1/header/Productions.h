@@ -17,7 +17,8 @@ void addProduction(std::string left, std::vector<std::string> right) {
 
 void generateSyntax() {
     addProduction("Program",    {"Sentence"});
-    addProduction("Sentence",   {"Stmt", "Func"});
+    addProduction("Sentence",   {"Stmt"});
+    addProduction("Sentence",   {"Func"});
     addProduction("Stmt",       {"VarStmt"});
     addProduction("Stmt",       {"VarStmt", "Stmt"});
     addProduction("Stmt",       {"Block"});
@@ -38,6 +39,26 @@ void generateSyntax() {
     addProduction("FuncDef",    {"Type", "Identifier", "(", "FuncParam", ")", "Block"});
     addProduction("FuncParam",  {"Type", "Identifier"});
     addProduction("FuncParam",  {"Type", "Identifier", "FuncParam"});
+    addProduction("Type",       {"int"});
+    addProduction("RelationExpr", {"UnequalExpr"});
+    addProduction("RelationExpr", {"EqualExpr"});
+    addProduction("UnequalExpr",  {"OperationExpr"});
+    addProduction("UnequalExpr",  {"UnequalExpr", "<", "AssignExpr"});
+    addProduction("UnequalExpr",  {"UnequalExpr", ">", "AssignExpr"});
+    addProduction("EqualExpr",  {"OperationExpr"});
+    addProduction("EqualExpr",  {"UnequalExpr", "=", "AssignExpr"});
+    addProduction("EqualExpr",  {"UnequalExpr", "!", "AssignExpr"});
+    addProduction("AssignExpr", {"OperationExpr"});
+    addProduction("AssignExpr", {"=", "OperationExpr"});
+    addProduction("OperationExpr", {"OperationExpr", "+", "Term"});
+    addProduction("OperationExpr", {"OperationExpr", "-", "Term"});
+    addProduction("OperationExpr", {"Term"});
+    addProduction("Term",    {"Term", "*", "Factor"});
+    addProduction("Term",    {"Term", "/", "Factor"});
+    addProduction("Term",    {"Factor"});
+    addProduction("Factor",  {"(", "OperationExpr", ")"});
+    addProduction("Factor",  {"Digits"});
+    addProduction("Factor",  {"Identifier"});
 }
 
 int findProduction(ProductionTable pt, int loc, const Token& tok) {
@@ -57,8 +78,8 @@ int findProduction(ProductionTable pt, int loc, const Token& tok) {
 std::vector<int> findAllProduction(const ProductionTable& pt, const Token& tok) {
     std::vector<int> res;
     int loc = 0;
-    while (loc != productions.size() && loc != GO_ERROR) {
-        loc = findProduction(pt, 0, tok);
+    while (loc != productions.size() - 1 && loc != GO_ERROR) {
+        loc = findProduction(pt, loc + 1, tok);
         if (loc != GO_ERROR) {
             res.push_back(loc);
         }
@@ -67,11 +88,11 @@ std::vector<int> findAllProduction(const ProductionTable& pt, const Token& tok) 
 }
 
 // current reading token x, find out the items
-Closure findCurrentProduction(const Closure& closure, const Token& x) {
+std::vector<Item> findCurrentProduction(const Closure& closure, const Token& x) {
     if (closure.empty()) {
         return {};
     }
-    Closure res{};
+    std::vector<Item> res{};
     for (const auto& item: closure) {
         Production prod = item.first;
         if (!willReduce(prod)) {

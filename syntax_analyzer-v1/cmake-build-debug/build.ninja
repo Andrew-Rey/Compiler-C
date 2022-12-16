@@ -56,6 +56,13 @@ build CMakeFiles/compilerlib.dir/src/LexicalAnalyzer/LexicalAnalyzer.cpp.obj: CX
   OBJECT_DIR = CMakeFiles\compilerlib.dir
   OBJECT_FILE_DIR = CMakeFiles\compilerlib.dir\src\LexicalAnalyzer
 
+build CMakeFiles/compilerlib.dir/src/SyntaxParser/SyntaxParser.cpp.obj: CXX_COMPILER__compilerlib_Debug D$:/xrCLang/Compiler-C/syntax_analyzer-v1/src/SyntaxParser/SyntaxParser.cpp || cmake_object_order_depends_target_compilerlib
+  DEP_FILE = CMakeFiles\compilerlib.dir\src\SyntaxParser\SyntaxParser.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -ID:/xrCLang/Compiler-C/syntax_analyzer-v1/header -ID:/xrCLang/Compiler-C/syntax_analyzer-v1/src -ID:/xrCLang/Compiler-C/syntax_analyzer-v1/header/LexicalAnalyzer -ID:/xrCLang/Compiler-C/syntax_analyzer-v1/header/SyntaxParser
+  OBJECT_DIR = CMakeFiles\compilerlib.dir
+  OBJECT_FILE_DIR = CMakeFiles\compilerlib.dir\src\SyntaxParser
+
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target compilerlib
@@ -64,7 +71,7 @@ build CMakeFiles/compilerlib.dir/src/LexicalAnalyzer/LexicalAnalyzer.cpp.obj: CX
 #############################################
 # Link the static library libcompilerlib.a
 
-build libcompilerlib.a: CXX_STATIC_LIBRARY_LINKER__compilerlib_Debug CMakeFiles/compilerlib.dir/src/LexicalAnalyzer/LexicalAnalyzer.cpp.obj
+build libcompilerlib.a: CXX_STATIC_LIBRARY_LINKER__compilerlib_Debug CMakeFiles/compilerlib.dir/src/LexicalAnalyzer/LexicalAnalyzer.cpp.obj CMakeFiles/compilerlib.dir/src/SyntaxParser/SyntaxParser.cpp.obj
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles\compilerlib.dir
   POST_BUILD = cd .

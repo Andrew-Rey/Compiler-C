@@ -79,6 +79,7 @@
 			},
 			"sourceIndexes" : 
 			[
+				16,
 				17
 			]
 		}
@@ -112,14 +113,14 @@
 				12,
 				13,
 				14,
-				15,
-				16
+				15
 			]
 		},
 		{
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
+				16,
 				17
 			]
 		}
@@ -193,11 +194,6 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "header/SyntaxParser/SynActions.h",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
 			"path" : "header/SyntaxParser/SynInterface.h",
 			"sourceGroupIndex" : 0
 		},
@@ -215,6 +211,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/LexicalAnalyzer/LexicalAnalyzer.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/SyntaxParser/SyntaxParser.cpp",
 			"sourceGroupIndex" : 1
 		}
 	],

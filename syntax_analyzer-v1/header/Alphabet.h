@@ -13,20 +13,21 @@
 #define EMPTY_STR "eps"
 #define END_SIGN "$"
 
+#define RESERVED_WORD_NUM 28
+#define TERMINAL_NUM 32
+#define NON_TERMINAL_NUM 21
+
 typedef std::string Token;
 
 namespace alphabet {
 
-    const std::vector<Token> terminal_res_ = {
+    // keep sequences order!
+    std::vector<Token> total_token = {
             "if", "else", "while", "return", "break", "continue", "int", "void", ";", ",", ":", ".", "+", "-", "*", "/",
-            "<", "<=", ">", ">=", "=", "%", "!", "{", "}", "(", ")", "[", "]"
-    };
+            "<", "<=", ">", ">=", "=", "!", "{", "}", "(", ")", "[", "]",
 
-    const std::vector<Token> terminal_non_res_ = {
-            "Identifier", "Digits"
-    };
+            "Identifier", "Digits", EMPTY_STR, END_SIGN,
 
-    const std::vector<Token> non_terminal_ = {
             GLOBAL_START,
             // tokens
             START_SIGN,
@@ -41,49 +42,34 @@ namespace alphabet {
             "RelationExpr", "OperationExpr",
             // for Cond
             // RelationExpr
+            // for RelationExpr
+            "EqualExpr", "UnequalExpr", "AssignExpr",
+            // for OperationExpr
+            "Term", "Factor",
 
             // for Func
-            "FuncDecl", "FuncDef"
+            "FuncDecl", "FuncDef",
+            // for FuncDecl | FuncDef
+            "FuncParam"
     };
 
-    const std::vector<Token> boundary = {
-            EMPTY_STR, END_SIGN
-    };
-
-    bool isTerminal(Token tok) {
+    bool isTerminal(const Token &tok) {
         bool res = false;
-        for (auto t: terminal_res_) {
-            if (t == tok) {
+        for (int i = 0; i < TERMINAL_NUM; ++i) {
+            if (tok == total_token[i]) {
                 res = true;
                 break;
             }
         }
-        if (!res) {
-            for (auto t: terminal_non_res_) {
-                if (t == tok) {
-                    res = true;
-                    break;
-                }
-            }
-        }
         return res;
     }
 
-    bool isEps(Token tok) {
-        return tok == "eps";
-    }
-
-    std::vector<Token> every() {
-        std::vector<Token> res;
-        res.insert(res.begin(), terminal_res_.begin(), terminal_res_.end());
-        res.insert(res.end(), terminal_non_res_.begin(), terminal_non_res_.end());
-        res.insert(res.end(), non_terminal_.begin(), non_terminal_.end());
-        res.insert(res.end(), boundary.begin(), boundary.end());
-        return res;
+    bool isEps(const Token &tok) {
+        return tok == EMPTY_STR;
     }
 
     size_t tokenCount() {
-        return terminal_res_.size() + terminal_non_res_.size() + non_terminal_.size() + boundary.size();
+        return NON_TERMINAL_NUM + TERMINAL_NUM;
     }
 
 }

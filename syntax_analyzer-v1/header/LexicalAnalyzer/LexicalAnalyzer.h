@@ -12,9 +12,6 @@
 #include <cstring>
 #include <cassert>
 
-using alphabet::terminal_res_;
-using alphabet::non_terminal_;
-
 typedef void(*dfa)(std::string &file_in, StateType &state, std::vector<char> &buf, long long &read_p);
 
 void addSymbolTable(const std::vector<char> &buffer) {}
@@ -40,8 +37,8 @@ void lexAnalyzer(const std::string &file_in) {
 
     auto alpha_find = [&](const std::string &candidate) {
         bool res = false;
-        for (auto &it: terminal_res_) {
-            const auto &temp = it;
+        for (int i = 0; i < RESERVED_WORD_NUM; ++i) {
+            const auto &temp = alphabet::total_token[i];
             if (temp == candidate) {
                 res = true;
                 break;

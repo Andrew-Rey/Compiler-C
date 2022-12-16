@@ -23,7 +23,7 @@
 
 #define COUT_WIDTH  12
 #define MAX_PRO_LEN 10
-#define ACCEPT      -1
+#define GO_ACCEPT   200
 #define TAIL        -1
 #define GO_ERROR    -1
 
@@ -33,45 +33,44 @@ using std::endl;
 using std::setw;
 
 
+// type definition
 struct Production {
-    int                current_{};
-    int                loc_{};
-    Token              left_;
+    int current_{};
+    int loc_{};
+    Token left_;
     std::vector<Token> right_;
 
     Production() = default;
 
     Production(Token left, std::vector<Token> right) {
         current_ = 0;
-        loc_     = 0;
-        left_    = std::move(left);
-        right_   = std::move(right);
+        loc_ = 0;
+        left_ = std::move(left);
+        right_ = std::move(right);
     }
 
     bool operator==(const Production &prod) const {
         return this->current_ == prod.current_ &&
-                this->loc_    == prod.loc_ &&
-                this->left_   == prod.left_ &&
-                this->right_  == prod.right_;
+               this->loc_ == prod.loc_ &&
+               this->left_ == prod.left_ &&
+               this->right_ == prod.right_;
     }
 
     Production &operator=(const Production &prod) = default;
 };
 
 struct astNode {
-    Token                 tok_;
-    std::string           value_;
-    astNode*              child[MAX_PRO_LEN];
+    Token tok_;
+    std::string value_;
+    astNode *child[MAX_PRO_LEN];
 };
 
-typedef int(*Action)(int state, Token tok);
-
-typedef Token                                               NextToken;
-typedef std::pair<Production, NextToken>                    Item;
-typedef std::vector<Item>                                   Closure;
-typedef std::vector<std::vector<std::map<Token ,Action> > > LRTable;
-typedef std::vector<std::pair<Token, std::string> >         SymbolTable;
-typedef std::vector<Production>                             ProductionTable;
+typedef Token NextToken;
+typedef std::pair<Production, NextToken>                 Item;
+typedef std::vector<Item>                                Closure;
+typedef std::map<Token, std::vector<int> >               LRTable;
+typedef std::vector<std::pair<Token, std::string> >      SymbolTable;
+typedef std::vector<Production>                          ProductionTable;
 
 
 // global variables
@@ -96,7 +95,7 @@ inline bool in(std::vector<Closure> closure_table, Closure closure) {
 }
 
 // return the idx of closure in closure table
-inline int closure_to_idx(const std::vector<Closure>& closure_table, const Closure& closure) {
+inline int closureToIdx(const std::vector<Closure> &closure_table, const Closure &closure) {
     for (int idx = 0; idx < closure_table.size(); ++idx) {
         if (closure_table[idx] == closure) {
             return idx;
@@ -105,19 +104,32 @@ inline int closure_to_idx(const std::vector<Closure>& closure_table, const Closu
     return GO_ERROR;
 }
 
-inline bool willReduce(const Production& prod) {
+inline bool willReduce(const Production &prod) {
     return prod.current_ == prod.right_.size();
 }
 
-inline std::vector<Token> closure_next_token(Closure closure) {
+inline std::vector<Token> every(const std::vector<Token> &tok_vec = alphabet::total_token) {
+    return tok_vec;
+}
+
+inline std::vector<Item> every(const std::vector<Item> &closure) {
+    return closure;
+}
+
+inline std::vector<Token> closure_next_token(const Closure &closure) {
     std::vector<Token> next_tok_set;
-    for (auto item: closure) {
+    for (const auto &item: closure) {
         Production prod = item.first;
         if (!willReduce(prod)) {
             Token tok = prod.right_[prod.current_ + 1];
             if (!in(next_tok_set, tok)) {
-                next_tok_set.push_back(tok);
+                next_tok_set.emplace_back(tok);
+            }
+        } else {
+            if (!in(next_tok_set, END_SIGN)) {
+                next_tok_set.emplace_back(END_SIGN);
             }
         }
     }
+    return next_tok_set;
 }

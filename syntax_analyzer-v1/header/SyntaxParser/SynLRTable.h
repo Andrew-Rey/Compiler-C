@@ -6,19 +6,19 @@
 
 #include "Productions.h"
 #include "Global.h"
-#include "SynActions.h"
+#include <fstream>
 
 using alphabet::isTerminal;
 using alphabet::isEps;
-using alphabet::every;
 using alphabet::tokenCount;
+
 
 void first_rec(const Token &tok, std::vector<Token> &res) {
     if (in(res, tok)) {
         return;
     }
     if (isEps(tok)) {
-        res.emplace_back("eps");
+        res.emplace_back(EMPTY_STR);
         return;
     } else if (isTerminal(tok)) {
         res.emplace_back(tok);
@@ -44,7 +44,7 @@ std::vector<Token> stringFirst(const Item &item) {
     Production prod = item.first;
     // when production is not going to be reduced
     if (!willReduce(prod)) {
-        Token next_tok = item.second;
+        Token next_tok = prod.right_[prod.current_];
         std::vector<Token> res;
         std::vector<Token> tok_vec;
         tok_vec.assign(prod.right_.begin() + prod.current_ + 1, prod.right_.end());
@@ -62,7 +62,7 @@ std::vector<Token> stringFirst(const Item &item) {
 // conduct 1 iteration
 void generateClosure(Closure &state) {
     std::vector<Item> temp_closure = state;
-    for (auto item: state) {
+    for (const auto &item: state) {
         Production current_prod = item.first;
         Token current_next_tok = item.second;
         // not reduce
@@ -76,9 +76,9 @@ void generateClosure(Closure &state) {
             for (const auto &next_tok: candidate_next) {
                 Item temp_item;
                 temp_item.first = productions[idx];
-                item.second = next_tok;
-                if (!in(temp_closure, item)) {
-                    temp_closure.push_back(item);
+                temp_item.second = next_tok;
+                if (!in(temp_closure, temp_item)) {
+                    temp_closure.push_back(temp_item);
                 }
             }
         }
@@ -103,7 +103,7 @@ Closure generateClosureWrapper(Closure state) {
 
 Closure nextClosure(const Closure &current_closure, const Token &x) {
     Closure new_closure;
-    Closure it_closure = findCurrentProduction(current_closure, x);
+    std::vector<Item> it_closure = findCurrentProduction(current_closure, x);
     for (auto item: it_closure) {
         if (!willReduce(item.first)) {
             item.first.current_ += 1;
@@ -118,7 +118,7 @@ void lr1Closure(std::vector<Closure> &closure_table) {
     for (const auto &closure: closure_table) {
         for (const auto &tok: every()) {
             Closure next_closure = nextClosure(closure, tok);
-            if (!in(closure_table, closure) && !closure.empty()) {
+            if (!in(closure_table, next_closure) && !next_closure.empty()) {
                 temp_table.push_back(next_closure);
             }
         }
@@ -143,20 +143,53 @@ std::vector<Closure> lr1ClosureWrapper(const ProductionTable &table) {
     return closure_table;
 }
 
+void printLR1Table();
+
 void generateLRTable(const ProductionTable &table) {
     std::vector<Closure> closure_table = lr1ClosureWrapper(table);
     // init table to error
-    for (int i = 0; i < closure_table.size(); ++i) {
-        std::vector<std::map<Token, Action> > init_vec;
-        for (auto tok: every()) {
-            std::map<Token, Action> init_map;
-            init_map[tok] = error;
-            init_vec.push_back(init_map);
-        }
+    for (const auto &t: every()) {
+        lr1_table[t] = std::vector<int>(closure_table.size(), GO_ERROR);
     }
-    // fill the table
-    for (int row = 0; row < closure_table.size(); ++row) {
 
+    printLR1Table();
+
+    // actions
+    auto go = [&](const Closure &cur_clo, const Token &cur_tok) {
+        return closureToIdx(closure_table, nextClosure(cur_clo, cur_tok));
+    };
+    auto reduce = [&](const Production &prod) {
+        std::vector<int> prod_vec_idx = findAllProduction(productions, prod.left_);
+        int res = GO_ERROR;
+        for (int i: prod_vec_idx) {
+            if (prod == productions[i]) {
+                // use [i] to reduce
+                res = i;
+                break;
+            }
+        }
+        return res;
+    };
+
+    // fill the table
+    for (int cur_state = 0; cur_state < closure_table.size(); ++cur_state) {
+        for (const auto &item: every(closure_table[cur_state])) {
+            Production prod = item.first;
+            if (!willReduce(prod)) {
+                Token cur_tok = prod.right_[prod.current_];
+                lr1_table[cur_tok].at(cur_state) = go(closure_table[cur_state], cur_tok);
+            } else {
+                // will be reduced
+                if (prod.left_ != GLOBAL_START) {
+                    // not S prime
+                    lr1_table[item.second].at(cur_state) = reduce(prod);
+                } else if (prod.right_.size() == 1 && prod.right_[0] == START_SIGN && item.second == END_SIGN) {
+                    lr1_table[item.second].at(cur_state) = GO_ACCEPT;
+                } else {
+                    lr1_table[item.second].at(cur_state) = GO_ERROR;
+                }
+            }
+        }
     }
 }
 
@@ -177,4 +210,19 @@ void printSymbolTable() {
         }
         cout << endl;
     }
+}
+
+void printLR1Table() {
+    std::fstream write_file{"../LR1Table.txt", std::ios::in | std::ios::out};
+    if (!lr1_table.empty()) {
+        write_file << "The LR1 table is:" << endl;
+        for (const auto &tok: every()) {
+            write_file << setw(COUT_WIDTH) << tok << " ";
+            for (const auto &act: lr1_table[tok]) {
+                write_file << setw(2) << act << " ";
+            }
+            write_file << endl;
+        }
+    }
+    write_file.close();
 }
