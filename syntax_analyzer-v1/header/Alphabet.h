@@ -13,9 +13,9 @@
 #define EMPTY_STR "eps"
 #define END_SIGN "$"
 
-#define RESERVED_WORD_NUM 28
-#define TERMINAL_NUM 32
-#define NON_TERMINAL_NUM 21
+#define RESERVED_WORD_NUM 28  // 2
+#define TERMINAL_NUM 32  // 4
+#define NON_TERMINAL_NUM 21  // 2
 
 typedef std::string Token;
 
@@ -51,6 +51,13 @@ namespace alphabet {
             "FuncDecl", "FuncDef",
             // for FuncDecl | FuncDef
             "FuncParam"
+
+            // the alphabet below are used for testing
+/*
+            "0", "1", EMPTY_STR, END_SIGN,
+
+            GLOBAL_START, START_SIGN
+*/
     };
 
     bool isTerminal(const Token &tok) {

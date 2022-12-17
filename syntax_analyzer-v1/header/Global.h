@@ -23,8 +23,13 @@
 
 #define COUT_WIDTH  12
 #define MAX_PRO_LEN 10
-#define GO_ACCEPT   200
-#define TAIL        -1
+
+/* define the base pointers
+ * reduce production mapping: 0th prod -> -3
+ * state goto mapping: 0th state -> 0
+ * */
+#define GO_ACCEPT   -2
+#define GO_REDUCE   -3
 #define GO_ERROR    -1
 
 using std::cout;
@@ -36,7 +41,6 @@ using std::setw;
 // type definition
 struct Production {
     int current_{};
-    int loc_{};
     Token left_;
     std::vector<Token> right_;
 
@@ -44,14 +48,12 @@ struct Production {
 
     Production(Token left, std::vector<Token> right) {
         current_ = 0;
-        loc_ = 0;
         left_ = std::move(left);
         right_ = std::move(right);
     }
 
     bool operator==(const Production &prod) const {
         return this->current_ == prod.current_ &&
-               this->loc_ == prod.loc_ &&
                this->left_ == prod.left_ &&
                this->right_ == prod.right_;
     }

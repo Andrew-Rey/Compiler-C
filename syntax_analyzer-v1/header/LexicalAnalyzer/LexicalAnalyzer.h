@@ -130,7 +130,7 @@ void lexAnalyzer(const std::string &file_in) {
                 }
 
                 case StateType::ERROR: {
-                    throw std::runtime_error("error");
+                    throw std::runtime_error("LexicalAnalysis error");
                 }
 
                 default: {

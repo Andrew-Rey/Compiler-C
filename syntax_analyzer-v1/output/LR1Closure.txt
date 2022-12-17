@@ -1,0 +1,28 @@
+ 0 	Program -> Sentence 	{$ }
+	Sentence -> 0 Sentence 1 	{$ }
+	Sentence -> 0 1 	{$ }
+
+ 1 	Sentence -> 0 ，Sentence 1 	{$ }
+	Sentence -> 0 ，1 	{$ }
+	Sentence -> 0 Sentence 1 	{1 }
+	Sentence -> 0 1 	{1 }
+
+ 2 	Program -> Sentence ，	{$ }
+
+ 3 	Sentence -> 0 ，Sentence 1 	{1 }
+	Sentence -> 0 ，1 	{1 }
+	Sentence -> 0 Sentence 1 	{1 }
+	Sentence -> 0 1 	{1 }
+
+ 4 	Sentence -> 0 1 ，	{$ }
+
+ 5 	Sentence -> 0 Sentence ，1 	{$ }
+
+ 6 	Sentence -> 0 1 ，	{1 }
+
+ 7 	Sentence -> 0 Sentence ，1 	{1 }
+
+ 8 	Sentence -> 0 Sentence 1 ，	{$ }
+
+ 9 	Sentence -> 0 Sentence 1 ，	{1 }
+

@@ -59,6 +59,13 @@ void generateSyntax() {
     addProduction("Factor",  {"(", "OperationExpr", ")"});
     addProduction("Factor",  {"Digits"});
     addProduction("Factor",  {"Identifier"});
+
+    // the productions below are used for testing
+     /*
+    addProduction(GLOBAL_START, {START_SIGN});
+    addProduction(START_SIGN, {"0", START_SIGN, "1"});
+    addProduction(START_SIGN, {"0", "1"});
+     */
 }
 
 int findProduction(ProductionTable pt, int loc, const Token& tok) {
