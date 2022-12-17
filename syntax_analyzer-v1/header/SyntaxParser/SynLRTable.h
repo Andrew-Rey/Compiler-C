@@ -12,76 +12,82 @@ using alphabet::isTerminal;
 using alphabet::isEps;
 using alphabet::tokenCount;
 
-
+// TODO: how to handle left recursion when finding first set
 std::vector<Token> first(const Token &tok) {
     if (isTerminal(tok)) {
         // X = x
         return {tok};
     } else {
         // non-terminal
-        std::vector<Token> first_set{};
+        std::vector<Token> fs{};
+        std::vector<Token> temp_first{};
+        // find all productions whose left is `tok`
         std::vector<int> prod_idx = findAllProduction(productions, tok);
         for (const auto &idx: prod_idx) {
+            // for every production whose left is `tok`, find their first set respectively
             Production prod = productions[idx];
-            Token candidate = prod.right_.front();
-            if (isTerminal(candidate) && !in(first_set, candidate)) {
-                // X -> a1 A2 ...
-                first_set.emplace_back(prod.right_.front());
-            } else {
-                // the most common situation: X -> A1 A2 ...
-                std::vector<Token> temp_first{};
-                int i = 0;  // iteration, i-th non-terminal
-                while (true) {
-                    temp_first = first(candidate);
-                    if (!in(temp_first, EMPTY_STR) || i == prod.right_.size()) {
+            int right_idx = 0;
+            int right_len = (int) prod.right_.size();
+            while (true) {
+                // get the start token of production
+                Token candidate = prod.right_[right_idx];
+                if (isTerminal(candidate) && !in(fs, candidate)) {
+                    // X -> a1 A2 ...
+                    // the start token is in the first set
+                    fs.emplace_back(prod.right_.front());
+                    break;
+                } else {
+                    // the most common situation: X -> A1 A2 ...
+                    // if the start token is the same with target token, then, ignore it
+                    if (tok == candidate) {
                         break;
                     }
+                    temp_first = first(candidate);
                     for (const auto &tf: temp_first) {
-                        if (!in(first_set, tf) && tf != EMPTY_STR) {
-                            first_set.emplace_back(tf);
+                        if (!in(fs, tf) && tf != EMPTY_STR) {
+                            fs.emplace_back(tf);
                         }
                     }
-                }
-                if (in(temp_first, EMPTY_STR) &&
-                    !in(first_set, EMPTY_STR) &&
-                    i == prod.right_.size()) {
-                    first_set.emplace_back(EMPTY_STR);
+                    if (!in(temp_first, EMPTY_STR) || right_idx == right_len) {
+                        break;
+                    } else {
+                        // if there is empty string in former candidate's first set, we should consider the next candidate
+                        right_idx += 1;
+                    }
                 }
             }
+            if (in(temp_first, EMPTY_STR) && right_idx == right_len) {
+                fs.emplace_back(EMPTY_STR);
+            }
         }
-        cout << "OK1" << endl;
-        return first_set;
+        return fs;
+    }
+}
+
+void everyTokenFirst() {
+    for (const auto &tok: every()) {
+        first_set[tok] = first(tok);
     }
 }
 
 std::vector<Token> itemFirst(const Item &item) {
-    std::vector<Token> first_set{};
+    std::vector<Token> fs{};
     Production prod = item.first;
     NextToken follow_tok = item.second;
-    if (willReduce(prod)) {  // TODO: after ValueDef? following = while?
-        return first_set;
+    if (willReduce(prod)) {
+        return fs;
     } else {
         NextToken next_tok;
         if (prod.current_ + 1 == prod.right_.size()) {
-            // if reaches to the tail of production, the next token is empty string
             next_tok = EMPTY_STR;
-            first_set.push_back(follow_tok);
+            fs = {follow_tok};
         } else {
             next_tok = prod.right_.at(prod.current_ + 1);
-            std::vector<Token> temp_first = first(next_tok);
-            for (const auto &t: temp_first) {
-                if (t != EMPTY_STR) {
-                    first_set.push_back(t);
-                } else {
-                    first_set.push_back(follow_tok);
-                }
-            }
+            fs = first_set[next_tok];
         }
-        cout << "OK2" << endl;
-        return first_set;
     }
+    return fs;
 }
-
 
 // conduct 1 iteration
 void generateClosure(Closure &state) {
@@ -96,10 +102,6 @@ void generateClosure(Closure &state) {
         Token candidate_tok = current_prod.right_[current_prod.current_];
         std::vector<int> candidate_prod_idx = findAllProduction(productions, candidate_tok);
         std::vector<Token> candidate_next = itemFirst(item);
-        cout << "OK3" << endl;
-        if (temp_closure.size() == 27) {
-            cout << "there bugs" << endl;
-        }
         for (auto idx: candidate_prod_idx) {
             for (const auto &next_tok: candidate_next) {
                 Item temp_item;
@@ -141,11 +143,12 @@ Closure nextClosure(const Closure &current_closure, const Token &x) {
     return generateClosureWrapper(new_closure);
 }
 
-void lr1Closure(std::vector<Closure> &closure_table) {
+void lr1Closure(std::vector<Closure> &closure_table, int start_loc) {
     std::vector<Closure> temp_table = closure_table;
-    for (const auto &closure: closure_table) {
-        for (const auto &tok: every()) {
-            Closure next_closure = nextClosure(closure, tok);
+    for (int closure_idx = start_loc; closure_idx < closure_table.size(); ++closure_idx) {
+        std::vector<Token> closure_next_tokens = closure_next_token(closure_table[closure_idx]);
+        for (const auto &tok: closure_next_tokens) {
+            Closure next_closure = nextClosure(closure_table[closure_idx], tok);
             if (!in(closure_table, next_closure) && !next_closure.empty()) {
                 temp_table.push_back(next_closure);
             }
@@ -154,15 +157,20 @@ void lr1Closure(std::vector<Closure> &closure_table) {
     closure_table = temp_table;
 }
 
+void printClosureTable(const std::vector<Closure> &ct);
+
 std::vector<Closure> lr1ClosureWrapper(const ProductionTable &table) {
     Item init_item = std::pair<Production, NextToken>(Production(GLOBAL_START, {START_SIGN}), END_SIGN);
     std::vector<Closure> closure_table = {generateClosureWrapper(Closure{init_item})};
     std::vector<Closure> former_table = closure_table;
+    int start_loc = 0;
     while (true) {
-        lr1Closure(closure_table);
+        lr1Closure(closure_table, start_loc);
+        printClosureTable(closure_table);
         if (closure_table.size() == former_table.size()) {
             break;
         } else if (closure_table.size() > former_table.size()) {
+            start_loc = (int)former_table.size();
             former_table = closure_table;
         } else {
             throw std::runtime_error("error in lr1ClosureWrapper!");
@@ -170,10 +178,6 @@ std::vector<Closure> lr1ClosureWrapper(const ProductionTable &table) {
     }
     return closure_table;
 }
-
-void printLR1Table();
-
-void printClosureTable(const std::vector<Closure> &ct);
 
 void generateLRTable(const ProductionTable &table) {
     std::vector<Closure> closure_table = lr1ClosureWrapper(table);
@@ -274,9 +278,7 @@ void printClosureTable(const std::vector<Closure> &ct) {
                     }
                 }
                 write_file << "\t" << "{";
-                for (const auto &s: i.second) {
-                    write_file << s << " ";
-                }
+                write_file << i.second << " ";
                 write_file << "}";
                 write_file << endl;
             }
@@ -284,4 +286,17 @@ void printClosureTable(const std::vector<Closure> &ct) {
         }
     }
     write_file.close();
+}
+
+void printFirstSet() {
+    std::fstream write_file{"../output/FirstSet.txt", std::ios::out};
+    if (!first_set.empty()) {
+        for (const auto &tok: every()) {
+            write_file << setw(COUT_WIDTH) << tok << " : ";
+            for (const auto &fs: first_set[tok]) {
+                write_file << fs << " ";
+            }
+            write_file << endl;
+        }
+    }
 }

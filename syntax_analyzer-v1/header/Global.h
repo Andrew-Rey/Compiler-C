@@ -73,11 +73,12 @@ typedef std::vector<Item>                                Closure;
 typedef std::map<Token, std::vector<int> >               LRTable;
 typedef std::vector<std::pair<Token, std::string> >      SymbolTable;
 typedef std::vector<Production>                          ProductionTable;
-
+typedef std::map<Token, std::vector<Token> >             FirstSet;
 
 // global variables
 SymbolTable     symbol_table;
 ProductionTable productions;
+FirstSet        first_set;
 LRTable         lr1_table;
 
 
@@ -119,19 +120,30 @@ inline std::vector<Item> every(const std::vector<Item> &closure) {
 }
 
 inline std::vector<Token> closure_next_token(const Closure &closure) {
-    std::vector<Token> next_tok_set;
-    for (const auto &item: closure) {
+    std::vector<Token> next_tokens;
+    for (const auto& item: closure) {
         Production prod = item.first;
-        if (!willReduce(prod)) {
-            Token tok = prod.right_[prod.current_ + 1];
-            if (!in(next_tok_set, tok)) {
-                next_tok_set.emplace_back(tok);
+        if (willReduce(prod)) {
+            if (!in(next_tokens, END_SIGN)) {
+                next_tokens.emplace_back(END_SIGN);
             }
         } else {
-            if (!in(next_tok_set, END_SIGN)) {
-                next_tok_set.emplace_back(END_SIGN);
+            if (!in(next_tokens, prod.right_.at(prod.current_))) {
+                next_tokens.emplace_back(prod.right_.at(prod.current_));
             }
         }
     }
-    return next_tok_set;
+    return next_tokens;
+}
+
+inline std::vector<Token> readTokens() {
+    if (!symbol_table.empty()) {
+        std::vector<Token> read_tokens;
+        for (const auto &item: symbol_table) {
+            read_tokens.push_back(item.first);
+        }
+        return read_tokens;
+    } else {
+        throw std::runtime_error("empty symbol table!");
+    }
 }

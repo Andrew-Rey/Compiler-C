@@ -4,11 +4,18 @@
 int main() {
     setbuf(stdout, nullptr);
     const std::string file_in = DATA_DIR "/demo/demo_parse_1.c-";
+
     generateSyntax();
-//    lexAnalyzer(file_in);
     printProductions();
-//    printSymbolTable();
+
+    lexAnalyzer(file_in);
+    printSymbolTable();
+
+    everyTokenFirst();
+    printFirstSet();
+
     generateLRTable(productions);
     printLR1Table();
+
     return 0;
 }

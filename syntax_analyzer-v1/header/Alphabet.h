@@ -13,8 +13,8 @@
 #define EMPTY_STR "eps"
 #define END_SIGN "$"
 
-#define RESERVED_WORD_NUM 28  // 2
-#define TERMINAL_NUM 32  // 4
+#define RESERVED_WORD_NUM 27  // 2
+#define TERMINAL_NUM 31  // 4
 #define NON_TERMINAL_NUM 21  // 2
 
 typedef std::string Token;
@@ -23,8 +23,8 @@ namespace alphabet {
 
     // keep sequences order!
     std::vector<Token> total_token = {
-            "if", "else", "while", "return", "break", "continue", "int", "void", ";", ",", ":", ".", "+", "-", "*", "/",
-            "<", "<=", ">", ">=", "=", "!", "{", "}", "(", ")", "[", "]",
+            "if", "else", "while", "return", "break", "continue", "int", "void", ";", "," , "+", "-", "*", "/",
+            "<", "<=", ">", ">=", "=", "==", "!=", "{", "}", "(", ")", "[", "]",
 
             "Identifier", "Digits", EMPTY_STR, END_SIGN,
 
@@ -35,7 +35,7 @@ namespace alphabet {
             "Stmt", "Func",
 
             // for Stmt
-            "VarStmt", "Block", "Cond",
+            "VarStmt", "Block",
             // for VarStmt
             "Type", "Expr", "VarDecl", "VarDef",
             // for Expr
@@ -43,7 +43,7 @@ namespace alphabet {
             // for Cond
             // RelationExpr
             // for RelationExpr
-            "EqualExpr", "UnequalExpr", "AssignExpr",
+            "EqualExpr", "UnequalExpr",
             // for OperationExpr
             "Term", "Factor",
 
@@ -53,11 +53,18 @@ namespace alphabet {
             "FuncParam"
 
             // the alphabet below are used for testing
-/*
+            /*
             "0", "1", EMPTY_STR, END_SIGN,
 
             GLOBAL_START, START_SIGN
-*/
+             */
+
+            // test with left recursion
+            /*
+            "(", ")", EMPTY_STR, END_SIGN,
+
+            GLOBAL_START, START_SIGN
+             */
     };
 
     bool isTerminal(const Token &tok) {

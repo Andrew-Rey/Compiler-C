@@ -1,0 +1,50 @@
+          if : if 
+        else : else 
+       while : while 
+      return : return 
+       break : break 
+    continue : continue 
+         int : int 
+        void : void 
+           ; : ; 
+           , : , 
+           + : + 
+           - : - 
+           * : * 
+           / : / 
+           < : < 
+          <= : <= 
+           > : > 
+          >= : >= 
+           = : = 
+          == : == 
+          != : != 
+           { : { 
+           } : } 
+           ( : ( 
+           ) : ) 
+           [ : [ 
+           ] : ] 
+  Identifier : Identifier 
+      Digits : Digits 
+         eps : eps 
+           $ : $ 
+     Program : int { if while 
+    Sentence : int { if while 
+        Stmt : int { if while 
+        Func : int 
+     VarStmt : int 
+       Block : { 
+        Type : int 
+        Expr : ( Digits Identifier 
+     VarDecl : int 
+      VarDef : int 
+RelationExpr : ( Digits Identifier 
+OperationExpr : ( Digits Identifier 
+   EqualExpr : ( Digits Identifier 
+ UnequalExpr : ( Digits Identifier 
+        Term : ( Digits Identifier 
+      Factor : ( Digits Identifier 
+    FuncDecl : int 
+     FuncDef : int 
+   FuncParam : int 
