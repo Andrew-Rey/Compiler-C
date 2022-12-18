@@ -6,7 +6,7 @@
 #include "LexComment.h"
 #include "LexSeparator.h"
 #include "LexOperator.h"
-#include "../Global.h"
+#include "Global.h"
 
 #include <vector>
 #include <cstring>

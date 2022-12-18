@@ -21,16 +21,20 @@
 #include <iomanip>
 #include <algorithm>
 
+/** define the length
+ * print, production length
+ */
 #define COUT_WIDTH  12
 #define MAX_PRO_LEN 10
 
-/* define the base pointers
+/** define the base pointers
  * reduce production mapping: 0th prod -> -3
  * state goto mapping: 0th state -> 0
- * */
+ */
+#define GO_SWITCH   0
+#define GO_ERROR    -1
 #define GO_ACCEPT   -2
 #define GO_REDUCE   -3
-#define GO_ERROR    -1
 
 using std::cout;
 using std::cin;
@@ -61,19 +65,55 @@ struct Production {
     Production &operator=(const Production &prod) = default;
 };
 
-struct astNode {
-    Token tok_;
-    std::string value_;
-    astNode *child[MAX_PRO_LEN];
+struct AstNode {
+    Token tok_{};
+    int height_{};
+    AstNode *child[MAX_PRO_LEN];
+
+    AstNode() = default;
+
+    AstNode(Token tok) {
+        this->tok_ = std::move(tok);
+        this->height_ = 0;
+        for (auto c: this->child) {
+            c = nullptr;
+        }
+    }
+
+    void calculateHeight() {
+        for (auto c: this->child) {
+            if (c == nullptr) {
+                break;
+            }
+            if (this->height_ < c->height_) {
+                this->height_ = c->height_;
+            }
+        }
+        this->height_ += 1;
+    }
+
+    void connectChild(std::vector<AstNode*> &children) {
+        int tail = (int) children.size();
+        if (tail == 0) {
+            return;
+        } else {
+            for (int i = 0; i < tail; ++i) {
+                this->child[i] = children.back();
+                children.pop_back();
+            }
+        }
+        this->calculateHeight();
+    }
 };
 
-typedef Token NextToken;
+typedef Token                                            NextToken;
 typedef std::pair<Production, NextToken>                 Item;
 typedef std::vector<Item>                                Closure;
 typedef std::map<Token, std::vector<int> >               LRTable;
 typedef std::vector<std::pair<Token, std::string> >      SymbolTable;
 typedef std::vector<Production>                          ProductionTable;
 typedef std::map<Token, std::vector<Token> >             FirstSet;
+
 
 // global variables
 SymbolTable     symbol_table;
@@ -117,6 +157,10 @@ inline std::vector<Token> every(const std::vector<Token> &tok_vec = alphabet::to
 
 inline std::vector<Item> every(const std::vector<Item> &closure) {
     return closure;
+}
+
+inline int reduceIndex(const int& act) {
+    return GO_REDUCE - act;
 }
 
 inline std::vector<Token> closure_next_token(const Closure &closure) {

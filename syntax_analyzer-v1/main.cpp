@@ -17,5 +17,8 @@ int main() {
     generateLRTable(productions);
     printLR1Table();
 
+    parse();
+
+
     return 0;
 }

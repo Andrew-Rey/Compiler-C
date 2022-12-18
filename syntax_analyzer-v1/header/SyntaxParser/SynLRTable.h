@@ -209,7 +209,7 @@ void generateLRTable(const ProductionTable &table) {
             Production prod = item.first;
             if (!willReduce(prod)) {
                 Token cur_tok = prod.right_[prod.current_];
-                lr1_table[cur_tok].at(cur_state) = go(closure_table[cur_state], cur_tok);
+                lr1_table[cur_tok].at(cur_state) = go(closure_table[cur_state], cur_tok) + GO_SWITCH;
             } else {
                 // will be reduced
                 if (prod.left_ != GLOBAL_START) {
