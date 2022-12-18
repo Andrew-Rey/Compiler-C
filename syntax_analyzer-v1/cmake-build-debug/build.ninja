@@ -89,7 +89,7 @@ build libcompilerlib.a: CXX_STATIC_LIBRARY_LINKER__compilerlib_Debug CMakeFiles/
 build cmake_object_order_depends_target_main: phony || cmake_object_order_depends_target_compilerlib
 
 build CMakeFiles/main.dir/main.cpp.obj: CXX_COMPILER__main_Debug D$:/xrCLang/Compiler-C/syntax_analyzer-v1/main.cpp || cmake_object_order_depends_target_main
-  DEFINES = -DDATA_DIR=\"D:/xrCLang/Compiler-C/syntax_analyzer-v1\"
+  DEFINES = -DDATA_DIR=\"D:/xrCLang/Compiler-C/syntax_analyzer-v1\" -DLR_DIR=\"D:/xrCLang/Compiler-C/syntax_analyzer-v1\"
   DEP_FILE = CMakeFiles\main.dir\main.cpp.obj.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -ID:/xrCLang/Compiler-C/syntax_analyzer-v1/header -ID:/xrCLang/Compiler-C/syntax_analyzer-v1/src -ID:/xrCLang/Compiler-C/syntax_analyzer-v1/header/LexicalAnalyzer -ID:/xrCLang/Compiler-C/syntax_analyzer-v1/header/SyntaxParser

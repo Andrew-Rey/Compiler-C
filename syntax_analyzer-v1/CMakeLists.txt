@@ -22,4 +22,5 @@ add_executable(main)
 target_sources(main PUBLIC main.cpp)
 target_link_libraries(main PUBLIC compilerlib)
 target_compile_definitions(main PUBLIC -DDATA_DIR="${PROJECT_SOURCE_DIR}")
+target_compile_definitions(main PUBLIC -DLR_DIR="${PROJECT_SOURCE_DIR}")
 

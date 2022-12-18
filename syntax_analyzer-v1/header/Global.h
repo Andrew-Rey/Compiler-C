@@ -70,12 +70,18 @@ struct AstNode {
     int height_{};
     AstNode *child[MAX_PRO_LEN];
 
-    AstNode() = default;
+    AstNode() {
+        this->tok_ = {};
+        this->height_ = 0;
+        for (auto &c: this->child) {
+            c = nullptr;
+        }
+    }
 
     AstNode(Token tok) {
         this->tok_ = std::move(tok);
         this->height_ = 0;
-        for (auto c: this->child) {
+        for (auto &c: this->child) {
             c = nullptr;
         }
     }
@@ -85,7 +91,7 @@ struct AstNode {
             if (c == nullptr) {
                 break;
             }
-            if (this->height_ < c->height_) {
+            if (this->height_ <= c->height_) {
                 this->height_ = c->height_;
             }
         }

@@ -47,6 +47,12 @@
 				"parent" : 0
 			},
 			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 25,
+				"parent" : 0
+			},
+			{
 				"command" : 3,
 				"file" : 0,
 				"line" : 7,
@@ -77,24 +83,28 @@
 				{
 					"backtrace" : 3,
 					"define" : "DATA_DIR=\"D:/xrCLang/Compiler-C/syntax_analyzer-v1\""
+				},
+				{
+					"backtrace" : 4,
+					"define" : "LR_DIR=\"D:/xrCLang/Compiler-C/syntax_analyzer-v1\""
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 4,
+					"backtrace" : 5,
 					"path" : "D:/xrCLang/Compiler-C/syntax_analyzer-v1/header"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 5,
 					"path" : "D:/xrCLang/Compiler-C/syntax_analyzer-v1/src"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 5,
 					"path" : "D:/xrCLang/Compiler-C/syntax_analyzer-v1/header/LexicalAnalyzer"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 5,
 					"path" : "D:/xrCLang/Compiler-C/syntax_analyzer-v1/header/SyntaxParser"
 				}
 			],
@@ -165,7 +175,7 @@
 	"sources" : 
 	[
 		{
-			"backtrace" : 5,
+			"backtrace" : 6,
 			"compileGroupIndex" : 0,
 			"path" : "main.cpp",
 			"sourceGroupIndex" : 0

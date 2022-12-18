@@ -97,7 +97,7 @@ void generateClosure(Closure &state) {
         Token current_next_tok = item.second;
         // not reduce
         if (willReduce(current_prod)) {
-            break;
+            continue;
         }
         Token candidate_tok = current_prod.right_[current_prod.current_];
         std::vector<int> candidate_prod_idx = findAllProduction(productions, candidate_tok);
@@ -159,14 +159,14 @@ void lr1Closure(std::vector<Closure> &closure_table, int start_loc) {
 
 void printClosureTable(const std::vector<Closure> &ct);
 
-std::vector<Closure> lr1ClosureWrapper(const ProductionTable &table) {
+std::vector<Closure> lr1ClosureWrapper() {
     Item init_item = std::pair<Production, NextToken>(Production(GLOBAL_START, {START_SIGN}), END_SIGN);
     std::vector<Closure> closure_table = {generateClosureWrapper(Closure{init_item})};
     std::vector<Closure> former_table = closure_table;
     int start_loc = 0;
     while (true) {
         lr1Closure(closure_table, start_loc);
-        printClosureTable(closure_table);
+//        printClosureTable(closure_table);
         if (closure_table.size() == former_table.size()) {
             break;
         } else if (closure_table.size() > former_table.size()) {
@@ -179,8 +179,8 @@ std::vector<Closure> lr1ClosureWrapper(const ProductionTable &table) {
     return closure_table;
 }
 
-void generateLRTable(const ProductionTable &table) {
-    std::vector<Closure> closure_table = lr1ClosureWrapper(table);
+void generateLRTable() {
+    std::vector<Closure> closure_table = lr1ClosureWrapper();
     printClosureTable(closure_table);
     // init table to error
     for (const auto &t: every()) {
@@ -214,7 +214,10 @@ void generateLRTable(const ProductionTable &table) {
                 // will be reduced
                 if (prod.left_ != GLOBAL_START) {
                     // not S prime
-                    lr1_table[item.second].at(cur_state) = reduce(prod);
+                    // define switch action is more precedent than reduce action
+                    if (lr1_table[item.second].at(cur_state) < GO_SWITCH) {
+                        lr1_table[item.second].at(cur_state) = reduce(prod);
+                    }
                 } else if (prod.right_.size() == 1 && prod.right_[0] == START_SIGN && item.second == END_SIGN) {
                     lr1_table[item.second].at(cur_state) = GO_ACCEPT;
                 } else {
@@ -223,6 +226,29 @@ void generateLRTable(const ProductionTable &table) {
             }
         }
     }
+}
+
+void generateLRTableOffLine(const std::string& first_file) {
+    std::fstream read_file{first_file, std::ios::in};
+    std::string temp;
+    Token tok;
+    while (std::getline(read_file, temp)) {
+        bool left = true;
+        Token fir;
+        for (auto c: temp) {
+            if (c == ':') {
+                left = false;
+            }
+            if (left) {
+                tok.push_back(c);
+            } else {
+                fir.push_back(c);
+            }
+        }
+        first_set[tok].push_back(fir);
+    }
+
+    generateLRTable();
 }
 
 void printSymbolTable() {
@@ -247,7 +273,6 @@ void printSymbolTable() {
 void printLR1Table() {
     std::fstream write_file{"../output/LR1Table.txt", std::ios::out};
     if (!lr1_table.empty()) {
-        write_file << "The LR1 table is:" << endl;
         for (const auto &tok: every()) {
             write_file << setw(COUT_WIDTH) << tok << " ";
             for (const auto &act: lr1_table[tok]) {

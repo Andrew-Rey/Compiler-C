@@ -29,22 +29,22 @@
       Digits : Digits 
          eps : eps 
            $ : $ 
-     Program : int { if while 
-    Sentence : int { if while 
-        Stmt : int { if while 
-        Func : int 
-     VarStmt : int 
+     Program : int void Identifier { if while return continue break 
+    Sentence : int void Identifier { if while return continue break 
+        Stmt : int void Identifier { if while return continue break 
+        Func : int void 
+     VarStmt : int void 
        Block : { 
-        Type : int 
+        Type : int void 
         Expr : ( Digits Identifier 
-     VarDecl : int 
-      VarDef : int 
+     VarDecl : int void 
+      VarDef : int void 
 RelationExpr : ( Digits Identifier 
 OperationExpr : ( Digits Identifier 
    EqualExpr : ( Digits Identifier 
  UnequalExpr : ( Digits Identifier 
         Term : ( Digits Identifier 
       Factor : ( Digits Identifier 
-    FuncDecl : int 
-     FuncDef : int 
-   FuncParam : int 
+    FuncDecl : int void 
+     FuncDef : int void 
+   FuncParam : int void 

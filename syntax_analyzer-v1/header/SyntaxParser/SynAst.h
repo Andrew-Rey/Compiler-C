@@ -2,6 +2,6 @@
 
 #include "Global.h"
 
-void printAst() {
+void printAst(std::vector<AstNode *>root) {
 
 }

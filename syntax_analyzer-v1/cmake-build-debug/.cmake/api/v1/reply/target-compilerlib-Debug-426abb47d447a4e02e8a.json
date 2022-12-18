@@ -79,8 +79,8 @@
 			},
 			"sourceIndexes" : 
 			[
-				16,
-				17
+				17,
+				18
 			]
 		}
 	],
@@ -113,15 +113,16 @@
 				12,
 				13,
 				14,
-				15
+				15,
+				16
 			]
 		},
 		{
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				16,
-				17
+				17,
+				18
 			]
 		}
 	],
@@ -190,6 +191,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "header/Productions.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "header/SyntaxParser/SynAst.h",
 			"sourceGroupIndex" : 0
 		},
 		{

@@ -17,6 +17,7 @@ std::stack<int> state_stack;
  */
 void parse() {
     std::vector<Token> read_tok = readTokens();
+//    std::vector<AstNode* > root;
     token_stack.push(END_SIGN);
     state_stack.push(0);
     bool accept = false;
@@ -28,30 +29,39 @@ void parse() {
         if (read_p == read_tok.size()) {
             break;
         }
-        token_stack.push(read_tok[read_p]);
-        Token top_tok = token_stack.top();
         int top_stat = state_stack.top();
-        action = lr1_table[top_tok][top_stat];
+        // get the reading token first but do not push to stack
+        Token next_tok = read_tok[read_p];
+        action = lr1_table[next_tok][top_stat];
         if (action >= GO_SWITCH) {
-            // do switching
+            // do switch
             int next_stat = action;
+            token_stack.push(next_tok);
             state_stack.push(next_stat);
             read_p += 1;
         }
         if (action <= GO_REDUCE) {
-            // do reducing
+            // do reduce
+            // the reading token can not be pushed into stack
+            // get the reduced result and put it into reading line, before the reading token
+            // so the read_p should minus 1
             int prod_idx = reduceIndex(action);
             int reduce_len = (int) productions[prod_idx].right_.size();
             Token reduce_res = productions[prod_idx].left_;
-            auto *parent = new AstNode(reduce_res);
-            std::vector<AstNode *> children;
+            // generate AST node
+//            auto *parent = new AstNode(reduce_res);
+//            std::vector<AstNode *> children;
             for (int i = 0; i < reduce_len; ++i) {
-                auto *child = new AstNode(top_tok);
-                children.push_back(child);
+//                next_tok = token_stack.top();
+//                auto *child = new AstNode(next_tok);
+//                children.push_back(child);
+//                root.push_back(child);
                 token_stack.pop();
-                top_tok = token_stack.top();
+                state_stack.pop();
             }
-            parent->connectChild(children);
+//            parent->connectChild(children);
+            // update stack and reading line
+            read_p -= 1;
             read_tok[read_p] = reduce_res;
         }
         if (action == GO_ERROR) {
@@ -69,6 +79,24 @@ void parse() {
     }
     if (accept) {
         cout << "parse finished successfully!" << endl;
-        printAst();
+//        printAst(root);
     }
+}
+
+/**
+ * this function is a wrapper of `parse`,
+ * which realizes reading from existed lr1 table to main memory
+ */
+void parseOffLine(const std::string &file_in) {
+    std::fstream file_read{file_in, std::ios::in};
+    std::string temp;
+    Token tok;
+    while (file_read >> temp) {
+        if (in(alphabet::total_token, temp)) {
+            tok = temp;
+            continue;
+        }
+        lr1_table[tok].push_back(std::stoi(temp));
+    }
+    parse();
 }
