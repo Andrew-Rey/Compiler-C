@@ -3,7 +3,9 @@
 
 int main() {
     setbuf(stdout, nullptr);
-    const std::string file_in = DATA_DIR "/demo/demo_parse_1.c-";
+//    const std::string file_in = DATA_DIR "/demo/demo_parse_1.c-";
+//    const std::string file_in = DATA_DIR "/demo/demo_parse_2.c-";
+    const std::string file_in = DATA_DIR "/demo/demo_parse_3.c-";
     const std::string lr1_file = LR_DIR "/output/LR1Table.txt";
     const std::string first_file = LR_DIR "/output/FirstSet.txt";
 
@@ -17,10 +19,10 @@ int main() {
      * the first run needed to do:
      * generate first set and lr1_table
      */
-    everyTokenFirst();
-    printFirstSet();
-    generateLRTable();
-    printLR1Table();
+//    everyTokenFirst();
+//    printFirstSet();
+//    generateLRTable();
+//    printLR1Table();
 
     /**
      * if there is already a lr1_table in MAIN MEMORY
@@ -32,7 +34,7 @@ int main() {
      * if there is already a lr1_table in DISK (FILE)
      * then use this parser
      */
-//    parseOffLine(lr1_file);
+    parseOffLine(lr1_file);
 
     return 0;
 }

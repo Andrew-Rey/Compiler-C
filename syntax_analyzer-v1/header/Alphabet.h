@@ -14,8 +14,8 @@
 #define END_SIGN "$"
 
 #define RESERVED_WORD_NUM 27  // 2
-#define TERMINAL_NUM 31  // 4
-#define NON_TERMINAL_NUM 21  // 2
+#define TERMINAL_NUM 32  // 4
+#define NON_TERMINAL_NUM 22  // 2
 
 typedef std::string Token;
 
@@ -37,9 +37,9 @@ namespace alphabet {
             // for Stmt
             "VarStmt", "Block",
             // for VarStmt
-            "Type", "Expr", "VarDecl", "VarDef",
+            "Type", "Expr", "VarDecl", "VarDef", "VarAssign", "BlockItem",
             // for Expr
-            "RelationExpr", "OperationExpr",
+            "RelationExpr", "OperationExpr", "IdentList",
             // for Cond
             // RelationExpr
             // for RelationExpr

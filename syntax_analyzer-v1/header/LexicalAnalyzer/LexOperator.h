@@ -22,6 +22,13 @@ void dfaOperator(std::string &file_in, StateType &state, std::vector<char> &buf,
                         state = StateType::ENTER_OP;
                     } else if (isOperator(c)) {
                         buf.push_back(c);
+                        if (c == '=' || c == '!') {
+                            file_read.read(&c, sizeof(char));
+                            if (c == '=') {
+                                buf.push_back(c);
+                                read_p = file_read.tellg();
+                            }
+                        }
                         state = StateType::END_OP;
                     } else {
                         file_read.seekg((long long) -sizeof(char), std::ios::cur);

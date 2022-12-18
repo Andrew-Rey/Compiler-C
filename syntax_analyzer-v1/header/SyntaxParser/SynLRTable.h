@@ -228,29 +228,6 @@ void generateLRTable() {
     }
 }
 
-void generateLRTableOffLine(const std::string& first_file) {
-    std::fstream read_file{first_file, std::ios::in};
-    std::string temp;
-    Token tok;
-    while (std::getline(read_file, temp)) {
-        bool left = true;
-        Token fir;
-        for (auto c: temp) {
-            if (c == ':') {
-                left = false;
-            }
-            if (left) {
-                tok.push_back(c);
-            } else {
-                fir.push_back(c);
-            }
-        }
-        first_set[tok].push_back(fir);
-    }
-
-    generateLRTable();
-}
-
 void printSymbolTable() {
     if (!symbol_table.empty()) {
         cout << "The symbol table is:" << endl;
@@ -259,8 +236,10 @@ void printSymbolTable() {
         }
         cout << endl;
 
+        int line_num = 0;
         for (const auto &item: symbol_table) {
-            cout << setw(COUT_WIDTH) << item.second << setw(COUT_WIDTH) << item.first << endl;
+            cout << line_num << setw(COUT_WIDTH) << item.second << setw(COUT_WIDTH) << item.first << endl;
+            line_num += 1;
         }
 
         for (auto _ = 0; _ < 50; ++_) {

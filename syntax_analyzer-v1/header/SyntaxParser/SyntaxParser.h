@@ -17,6 +17,7 @@ std::stack<int> state_stack;
  */
 void parse() {
     std::vector<Token> read_tok = readTokens();
+    read_tok.emplace_back(END_SIGN);
 //    std::vector<AstNode* > root;
     token_stack.push(END_SIGN);
     state_stack.push(0);
@@ -26,9 +27,6 @@ void parse() {
     int read_p = 0;
 
     while (!accept && !error) {
-        if (read_p == read_tok.size()) {
-            break;
-        }
         int top_stat = state_stack.top();
         // get the reading token first but do not push to stack
         Token next_tok = read_tok[read_p];
@@ -74,7 +72,7 @@ void parse() {
         }
     }
 
-    if (error) {
+    if (error  || read_p < read_tok.size() - 1) {
         cout << "error occurred in: " << read_p << endl;
     }
     if (accept) {

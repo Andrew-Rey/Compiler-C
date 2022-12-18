@@ -20,13 +20,6 @@ enum struct StateType {
     // digits
     ENTER_DIGITS, IN_DIGITS, END_DIGITS,
 
-    // operation expression
-    ENTER_EXPR, IS_MUL_EXPR, EXPR_S2, EXPR_S3, IS_ADD_EXPR, EXPR_S5, END_EXPR,
-
-    // relation expression
-    ENTER_UNEQ_EXPR, ENTER_EQ_EXPR, UNEQ_EXPR_S1, IS_GL_EXPR, IS_UNEQ_EXPR, EQ_EXPR_S1, IS_EQ_EXOR, IS_NOEQ_EXPR,
-    END_UNEQ_EXPR, END_EQ_EXPR,
-
     // comment
     ENTER_CMT, CMT_S1, INNER_CMT_S2, CMT_S3, END_CMT,
 
@@ -35,7 +28,7 @@ enum struct StateType {
 };
 
 const std::set<std::string> reserved_words = {
-        "int", "while", "if", "else", "return", "void"
+        "int", "while", "if", "else", "return", "void", "break", "continue",
 };
 
 const std::set<char> separators = {

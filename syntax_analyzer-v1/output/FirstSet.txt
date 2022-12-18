@@ -29,18 +29,21 @@
       Digits : Digits 
          eps : eps 
            $ : $ 
-     Program : int void Identifier { if while return continue break 
-    Sentence : int void Identifier { if while return continue break 
-        Stmt : int void Identifier { if while return continue break 
+     Program : Program 
+    Sentence : int void 
+        Stmt : int void Identifier { if while return continue break ; 
         Func : int void 
-     VarStmt : int void 
+     VarStmt : int void Identifier 
        Block : { 
         Type : int void 
         Expr : ( Digits Identifier 
      VarDecl : int void 
       VarDef : int void 
+   VarAssign : Identifier 
+   BlockItem : int void Identifier { if while return continue break ; 
 RelationExpr : ( Digits Identifier 
 OperationExpr : ( Digits Identifier 
+   IdentList : Identifier 
    EqualExpr : ( Digits Identifier 
  UnequalExpr : ( Digits Identifier 
         Term : ( Digits Identifier 

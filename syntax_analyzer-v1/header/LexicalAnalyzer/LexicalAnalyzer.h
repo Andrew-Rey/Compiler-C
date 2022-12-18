@@ -14,8 +14,6 @@
 
 typedef void(*dfa)(std::string &file_in, StateType &state, std::vector<char> &buf, long long &read_p);
 
-void addSymbolTable(const std::vector<char> &buffer) {}
-
 void lexAnalyzer(const std::string &file_in) {
     std::string file_in_str = file_in;
     std::ifstream file_read{file_in, std::ios::in | std::ios::binary | std::ios::ate};
