@@ -66,59 +66,54 @@ struct Production {
 };
 
 struct AstNode {
+private:
     Token tok_{};
-    int height_{};
-    AstNode *child[MAX_PRO_LEN];
+    std::string val_{};
+
+public:
+    std::vector<AstNode *> child_;
 
     AstNode() {
         this->tok_ = {};
-        this->height_ = 0;
-        for (auto &c: this->child) {
-            c = nullptr;
-        }
     }
 
-    AstNode(Token tok) {
+    explicit AstNode(Token tok, const std::string &str="") {
         this->tok_ = std::move(tok);
-        this->height_ = 0;
-        for (auto &c: this->child) {
-            c = nullptr;
-        }
+        this->val_ = str;
     }
 
-    void calculateHeight() {
-        for (auto c: this->child) {
-            if (c == nullptr) {
-                break;
-            }
-            if (this->height_ <= c->height_) {
-                this->height_ = c->height_;
-            }
-        }
-        this->height_ += 1;
+    [[nodiscard]] inline Token getToken() const {
+        return this->tok_;
     }
 
-    void connectChild(std::vector<AstNode*> &children) {
+    [[nodiscard]] inline std::string getValue() const {
+        return this->val_;
+    }
+
+    [[nodiscard]] inline size_t getChildCount() const {
+        return this->child_.size();
+    }
+
+    inline void connectChild(std::vector<AstNode *> &children) {
         int tail = (int) children.size();
         if (tail == 0) {
             return;
         } else {
             for (int i = 0; i < tail; ++i) {
-                this->child[i] = children.back();
+                this->child_.push_back(children.back());
                 children.pop_back();
             }
         }
-        this->calculateHeight();
     }
 };
 
-typedef Token                                            NextToken;
-typedef std::pair<Production, NextToken>                 Item;
-typedef std::vector<Item>                                Closure;
-typedef std::map<Token, std::vector<int> >               LRTable;
-typedef std::vector<std::pair<Token, std::string> >      SymbolTable;
-typedef std::vector<Production>                          ProductionTable;
-typedef std::map<Token, std::vector<Token> >             FirstSet;
+typedef Token                                       NextToken;
+typedef std::pair<Production, NextToken>            Item;
+typedef std::vector<Item>                           Closure;
+typedef std::map<Token, std::vector<int> >          LRTable;
+typedef std::vector<std::pair<Token, std::string> > SymbolTable;
+typedef std::vector<Production>                     ProductionTable;
+typedef std::map<Token, std::vector<Token> >        FirstSet;
 
 
 // global variables
@@ -165,13 +160,13 @@ inline std::vector<Item> every(const std::vector<Item> &closure) {
     return closure;
 }
 
-inline int reduceIndex(const int& act) {
+inline int reduceIndex(const int &act) {
     return GO_REDUCE - act;
 }
 
-inline std::vector<Token> closure_next_token(const Closure &closure) {
+std::vector<Token> closure_next_token(const Closure &closure) {
     std::vector<Token> next_tokens;
-    for (const auto& item: closure) {
+    for (const auto &item: closure) {
         Production prod = item.first;
         if (willReduce(prod)) {
             if (!in(next_tokens, END_SIGN)) {
@@ -186,14 +181,17 @@ inline std::vector<Token> closure_next_token(const Closure &closure) {
     return next_tokens;
 }
 
-inline std::vector<Token> readTokens() {
+std::vector<AstNode *> readFromSymbolTable() {
     if (!symbol_table.empty()) {
-        std::vector<Token> read_tokens;
-        for (const auto &item: symbol_table) {
-            read_tokens.push_back(item.first);
+        std::vector<AstNode *> res;
+        for (const auto& item: symbol_table) {
+            auto *ast_node = new AstNode(item.first, item.second);
+            res.push_back(ast_node);
         }
-        return read_tokens;
+        auto *end_sign = new AstNode(END_SIGN);
+        res.push_back(end_sign);
+        return res;
     } else {
-        throw std::runtime_error("empty symbol table!");
+        throw std::runtime_error("empty symbol table");
     }
 }

@@ -5,7 +5,7 @@
 #include "SynLRTable.h"
 #include "SynAst.h"
 
-std::stack<Token> token_stack;
+std::stack<AstNode *> token_stack;
 std::stack<int> state_stack;
 
 // using generated symbol table and production table to generate AST
@@ -15,12 +15,12 @@ std::stack<int> state_stack;
  * index: symbol_table[idx].first
  * the lexical analysis result can be got using `readToken()`
  */
-void parse() {
-    std::vector<Token> read_tok = readTokens();
-    read_tok.emplace_back(END_SIGN);
-//    std::vector<AstNode* > root;
-    token_stack.push(END_SIGN);
+void parse(const std::string& file_out) {
+    std::vector<AstNode *> read_nodes = readFromSymbolTable();
+    auto *end_node = new AstNode(END_SIGN);
+    token_stack.push(end_node);
     state_stack.push(0);
+    AstNode *root;
     bool accept = false;
     bool error = false;
     int action = GO_ERROR;
@@ -29,12 +29,13 @@ void parse() {
     while (!accept && !error) {
         int top_stat = state_stack.top();
         // get the reading token first but do not push to stack
-        Token next_tok = read_tok[read_p];
+        auto *next_node = read_nodes[read_p];
+        Token next_tok = next_node->getToken();
         action = lr1_table[next_tok][top_stat];
         if (action >= GO_SWITCH) {
             // do switch
             int next_stat = action;
-            token_stack.push(next_tok);
+            token_stack.push(next_node);
             state_stack.push(next_stat);
             read_p += 1;
         }
@@ -47,20 +48,19 @@ void parse() {
             int reduce_len = (int) productions[prod_idx].right_.size();
             Token reduce_res = productions[prod_idx].left_;
             // generate AST node
-//            auto *parent = new AstNode(reduce_res);
-//            std::vector<AstNode *> children;
+            auto *parent = new AstNode(reduce_res);
+            std::vector<AstNode *> children;
             for (int i = 0; i < reduce_len; ++i) {
-//                next_tok = token_stack.top();
-//                auto *child = new AstNode(next_tok);
-//                children.push_back(child);
-//                root.push_back(child);
+                auto *child = token_stack.top();
+                children.push_back(child);
                 token_stack.pop();
                 state_stack.pop();
             }
-//            parent->connectChild(children);
+            parent->connectChild(children);
+            root = parent;
             // update stack and reading line
             read_p -= 1;
-            read_tok[read_p] = reduce_res;
+            read_nodes[read_p] = parent;
         }
         if (action == GO_ERROR) {
             // do error
@@ -72,20 +72,23 @@ void parse() {
         }
     }
 
-    if (error  || read_p < read_tok.size() - 1) {
-        cout << "error occurred in: " << read_p << endl;
+    cout << "-> parse finished successfully <-" << endl;
+
+    if (error || read_p < read_nodes.size() - 1) {
+        cout << "parse: error occurred in: " << read_p << endl;
     }
     if (accept) {
-        cout << "parse finished successfully!" << endl;
-//        printAst(root);
+        printAst(file_out, root);
     }
 }
 
 /**
  * this function is a wrapper of `parse`,
  * which realizes reading from existed lr1 table to main memory
+ * file_in: gives the LR(1) parse table
+ * file_out: the output file of abstract syntax tree (AST)
  */
-void parseOffLine(const std::string &file_in) {
+void parseOffLine(const std::string &file_in, const std::string &file_out) {
     std::fstream file_read{file_in, std::ios::in};
     std::string temp;
     Token tok;
@@ -96,5 +99,7 @@ void parseOffLine(const std::string &file_in) {
         }
         lr1_table[tok].push_back(std::stoi(temp));
     }
-    parse();
+    file_read.close();
+
+    parse(file_out);
 }

@@ -176,6 +176,7 @@ std::vector<Closure> lr1ClosureWrapper() {
             throw std::runtime_error("error in lr1ClosureWrapper!");
         }
     }
+    cout << "--> LR(1) closure generated successfully <--" << endl;
     return closure_table;
 }
 
@@ -226,6 +227,7 @@ void generateLRTable() {
             }
         }
     }
+    cout << "--> LR(1) table generated successfully <--" << endl;
 }
 
 void printSymbolTable() {

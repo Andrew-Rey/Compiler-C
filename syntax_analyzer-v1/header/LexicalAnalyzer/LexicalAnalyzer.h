@@ -139,6 +139,8 @@ void lexAnalyzer(const std::string &file_in) {
         }
     }
     file_read.close();
+
+    cout << "--> lexical analysis finished successfully <--" << endl;
 }
 
 
